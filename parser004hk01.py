@@ -1,43 +1,40 @@
+from __future__ import annotations
+
+from urllib.parse import unquote, urljoin
+
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, unquote
 
-def fetch_and_parse(url):
-response = requests.get(url)
-response.raise_for_status() # Check for request errors
-soup = BeautifulSoup(response.content, ‘html.parser’)
-return soup
 
-def extract_and_decode_links(soup, base_url):
-links = []
-for a_tag in soup.find_all(‘a’, href=True):
-link = urljoin(base_url, a_tag[‘href’])
-decoded_link = unquote(link) # Decode the URL
-links.append(decoded_link)
-return links
+def fetch_and_parse(session: requests.Session, url: str) -> BeautifulSoup:
+    response = session.get(url, timeout=15)
+    response.raise_for_status()
+    return BeautifulSoup(response.content, "html.parser")
 
-def main():
-url = ‘https://www.scmp.com’
-soup = fetch_and_parse(url)
-links = extract_and_decode_links(soup, url)
 
-```
-# Display links in chronological order (assuming they are in order of appearance)
-for link in links:
-    print(link)
-```
+def extract_and_decode_links(soup: BeautifulSoup, base_url: str) -> list[str]:
+    links: list[str] = []
+    # select('a[href]') is a bit faster than find_all with kwargs.
+    for a_tag in soup.select("a[href]"):
+        href = a_tag.get("href")
+        if not href:
+            continue
+        link = urljoin(base_url, href)
+        links.append(unquote(link))
+    return links
 
-if **name** == “**main**”:
-main()
 
-# Define the content you want to save
+def main() -> None:
+    url = "https://www.scmp.com"
+    with requests.Session() as session:
+        session.headers.update({"User-Agent": "pyusage/1.0"})
+        soup = fetch_and_parse(session, url)
+    links = extract_and_decode_links(soup, url)
 
-`#content = links`
+    # Display links in chronological order (order of appearance)
+    for link in links:
+        print(link)
 
-# Open a file in write mode
 
-`#with open(“output.txt”, “w”) as file:
-# Write the content to the file
-#file.write(content)`
-
-`#print(“File saved successfully!”)`
+if __name__ == "__main__":
+    main()
