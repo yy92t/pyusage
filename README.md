@@ -58,6 +58,16 @@ Welcome to your self-development journey with Python! This repository is designe
 - **Simple Web App**: Create a Flask or Django web application.
 - **Data Visualization**: Analyze and visualize data using matplotlib or pandas.
 
+## Scripts
+
+### wifiip.py (privacy-friendly ping sweep)
+
+- Run (privacy mode, hides full IPs): `python3 wifiip.py`
+- Run (reveal full IPs): `python3 wifiip.py --reveal`
+- Scan a specific network: `python3 wifiip.py --network 192.168.10.0/24`
+- Tune speed/timeout: `python3 wifiip.py --workers 128 --timeout 1.0`
+- Show MACs from ARP cache: `python3 wifiip.py --arp`
+
 ## Contributing
 
 Contributions are welcome! Please read the [contributing guidelines](CONTRIBUTING.md) for details.
