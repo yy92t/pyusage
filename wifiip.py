@@ -75,7 +75,8 @@ def _read_arp_table() -> dict[str, str]:
     commands: list[list[str]] = []
 
     if system == "darwin":
-        commands = [["arp", "-a"]]
+        # `-n` avoids reverse-DNS lookups that can make `arp -a` hang.
+        commands = [["arp", "-an"], ["arp", "-a"]]
     elif system == "windows":
         commands = [["arp", "-a"]]
     else:
@@ -93,7 +94,7 @@ def _read_arp_table() -> dict[str, str]:
                 stderr=subprocess.PIPE,
                 stdin=subprocess.DEVNULL,
                 text=True,
-                timeout=2.0,
+                timeout=5.0,
                 check=False,
             )
         except FileNotFoundError as e:
@@ -274,19 +275,23 @@ def main():
         print("Active host last octets:", [_last_octet(ip) for ip in active_ips])
 
     if args.arp and active_ips:
-        arp = _read_arp_table()
-        if args.reveal:
-            print("ARP MACs (from local cache):")
-            for ip in active_ips:
-                mac = arp.get(ip)
-                if mac:
-                    print(f"  {ip} -> {mac}")
+        try:
+            arp = _read_arp_table()
+        except RuntimeError as e:
+            print(f"ARP lookup failed (skipping): {e}")
         else:
-            print("ARP MACs (from local cache, masked):")
-            for ip in active_ips:
-                mac = arp.get(ip)
-                if mac:
-                    print(f"  .{_last_octet(ip)} -> {_mask_mac(mac)}")
+            if args.reveal:
+                print("ARP MACs (from local cache):")
+                for ip in active_ips:
+                    mac = arp.get(ip)
+                    if mac:
+                        print(f"  {ip} -> {mac}")
+            else:
+                print("ARP MACs (from local cache, masked):")
+                for ip in active_ips:
+                    mac = arp.get(ip)
+                    if mac:
+                        print(f"  .{_last_octet(ip)} -> {_mask_mac(mac)}")
 
 
 if __name__ == "__main__":
