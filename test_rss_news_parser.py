@@ -109,12 +109,18 @@ class TestRSSNewsParser(unittest.TestCase):
         entries = []
         for i in range(5):
             mock_entry = Mock()
-            mock_entry.get = lambda key, default="", idx=i: {
-                "title": f"Article {idx}",
-                "link": f"https://example.com/article{idx}",
-                "published": f"2026-01-13T{10+idx}:00:00",
-                "summary": f"Summary {idx}",
-            }.get(key, default)
+            # Use a function factory to avoid closure issues
+            def make_getter(idx):
+                def getter(key, default=""):
+                    return {
+                        "title": f"Article {idx}",
+                        "link": f"https://example.com/article{idx}",
+                        "published": f"2026-01-13T{10+idx}:00:00",
+                        "summary": f"Summary {idx}",
+                    }.get(key, default)
+                return getter
+            
+            mock_entry.get = make_getter(i)
             mock_entry.title = f"Article {i}"
             mock_entry.link = f"https://example.com/article{i}"
             mock_entry.published = f"2026-01-13T{10+i}:00:00"
