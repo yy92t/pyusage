@@ -60,6 +60,15 @@ Welcome to your self-development journey with Python! This repository is designe
 
 ## Scripts
 
+### rss_news_parser.py (RSS feed parser)
+
+Parse daily news articles from RSS feeds and extract summaries.
+
+- Parse a single RSS feed: `python3 rss_news_parser.py https://example.com/feed.xml`
+- Parse multiple feeds: `python3 rss_news_parser.py https://feed1.com/rss https://feed2.com/rss`
+- Limit articles displayed: `python3 rss_news_parser.py https://example.com/feed.xml --limit 5`
+- Show help: `python3 rss_news_parser.py --help`
+
 ### wifiip.py (privacy-friendly ping sweep)
 
 - Run (privacy mode, hides full IPs): `python3 wifiip.py`
