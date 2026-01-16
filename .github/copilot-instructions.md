@@ -15,6 +15,7 @@ This repository is a Python self-development project containing utility scripts 
 - **Imports**: Group imports in standard order (standard library, third-party, local)
 - **Functions**: Use descriptive function names with snake_case
 - **Private Functions**: Prefix internal helper functions with underscore (e.g., `_mask_ip`, `_domain_from_url`)
+- **Module Constants**: Prefix module-level compiled regex patterns and internal constants with underscore (e.g., `_RE_IF`, `_RE_WHILE`)
 - **Main Guard**: Always include `if __name__ == "__main__":` guard for executable scripts
 
 ## Testing
@@ -31,6 +32,8 @@ This repository is a Python self-development project containing utility scripts 
 - **Key Dependencies**: requests, beautifulsoup4, pandas
 - **Session Management**: Use `requests.Session()` context managers for HTTP requests
 - **User Agent**: Set custom User-Agent header as `"pyusage/1.0"` for web requests
+- **HTML Parsing**: Use BeautifulSoup with `"html.parser"` backend
+- **Security**: Use `secrets` module for cryptographically secure random values, not `random`
 
 ## Documentation
 
@@ -50,6 +53,13 @@ This repository is a Python self-development project containing utility scripts 
 - Use concurrent execution with `ThreadPoolExecutor` for parallel operations
 - Set appropriate timeouts for all network requests (typically 10-20 seconds)
 - Handle HTTP error codes gracefully with informative messages
+- Use `response.raise_for_status()` to automatically raise exceptions for bad HTTP status codes
+
+### Web Scraping
+- Use BeautifulSoup's `soup.select()` for CSS selectors (slightly faster than `find_all()` with kwargs)
+- Parse HTML with `BeautifulSoup(content, "html.parser")`
+- Use `urljoin()` to handle relative URLs correctly
+- Decode URL-encoded strings with `urllib.parse.unquote()`
 
 ### Privacy Considerations
 - The `wifiip.py` script implements privacy-friendly defaults (masks IP addresses)
@@ -68,3 +78,6 @@ This repository is a Python self-development project containing utility scripts 
 - Use type hints consistently throughout the codebase
 - Test edge cases and error conditions
 - Follow existing code patterns and conventions in the repository
+- Compile regex patterns at module level for reusability and performance
+- Use context managers (`with` statements) for resource management
+- Prefer standard library solutions when available before adding dependencies
