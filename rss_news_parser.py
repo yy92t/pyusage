@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime
-from typing import TypedDict
+try:
+    from typing import TypedDict
+except ImportError:
+    from typing_extensions import TypedDict
 
 import feedparser
 
