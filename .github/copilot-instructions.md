@@ -56,7 +56,7 @@ This repository is a Python self-development project containing utility scripts 
 - Use `response.raise_for_status()` to automatically raise exceptions for bad HTTP status codes
 
 ### Web Scraping
-- Use BeautifulSoup's `soup.select()` for CSS selectors (slightly faster than `find_all()` with kwargs)
+- Use BeautifulSoup's `soup.select()` for CSS selectors when matching elements by class, ID, or tag combinations
 - Parse HTML with `BeautifulSoup(content, "html.parser")`
 - Use `urljoin()` to handle relative URLs correctly
 - Decode URL-encoded strings with `urllib.parse.unquote()`
