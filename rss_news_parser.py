@@ -7,7 +7,13 @@ try:
 except ImportError:
     from typing_extensions import TypedDict
 
-import feedparser
+try:
+    import feedparser
+except ImportError:
+    print("Error: feedparser is not installed.")
+    print("Please install it using: pip install feedparser")
+    import sys
+    sys.exit(1)
 
 
 class Article(TypedDict):
@@ -27,13 +33,22 @@ def parse_rss_feed(feed_url: str) -> list[Article]:
         List of articles with title, link, published date, and summary
     """
     feed = feedparser.parse(feed_url)
+    
+    # Check for feed errors
+    if hasattr(feed, 'bozo') and feed.bozo:
+        if hasattr(feed, 'bozo_exception'):
+            raise Exception(f"Feed parsing error: {feed.bozo_exception}")
+    
     articles: list[Article] = []
     
     for entry in feed.entries:
         # Extract published date, fallback to current date if not available
         published = entry.get("published", "")
         if not published and hasattr(entry, "published_parsed") and entry.published_parsed:
-            published = datetime(*entry.published_parsed[:6]).isoformat()
+            try:
+                published = datetime(*entry.published_parsed[:6]).isoformat()
+            except (TypeError, ValueError):
+                published = datetime.now().isoformat()
         if not published:
             published = datetime.now().isoformat()
         
