@@ -1,0 +1,1 @@
+*/5 * * * * /home/yyhw25/Documents/pyusage/auto_git_push.sh 2>&1
